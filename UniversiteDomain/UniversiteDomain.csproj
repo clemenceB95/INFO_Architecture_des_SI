@@ -10,6 +10,7 @@
       <Folder Include="DataAdapters\" />
       <Folder Include="Entities\" />
       <Folder Include="UseCases\" />
+      <Folder Include="Util\" />
     </ItemGroup>
 
 </Project>
