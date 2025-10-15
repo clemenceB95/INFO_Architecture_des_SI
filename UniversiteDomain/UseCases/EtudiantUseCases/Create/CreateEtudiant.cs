@@ -1,5 +1,7 @@
 ﻿using UniversiteDomain.DataAdapters;
 using UniversiteDomain.Entities;
+using UniversiteDomain.Exceptions.EtudiantExceptions;
+using UniversiteDomain.Util;
 
 namespace UniversiteDomain.UseCases.EtudiantUseCases.Create;
 

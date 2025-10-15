@@ -1,4 +1,7 @@
-﻿namespace UniversiteDomain.Util;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+
+namespace UniversiteDomain.Util;
 
 public class CheckEmail
 {
