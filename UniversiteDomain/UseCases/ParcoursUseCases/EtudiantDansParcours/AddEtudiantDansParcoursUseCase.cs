@@ -45,14 +45,23 @@ public class AddEtudiantDansParcoursUseCase(IRepositoryFactory repositoryFactory
         ArgumentNullException.ThrowIfNull(repositoryFactory.ParcoursRepository());
         
         // On recherche l'étudiant
-        List<Etudiant> etudiant = await repositoryFactory.EtudiantRepository().FindByConditionAsync(e=>e.Id.Equals(idEtudiant));;
+        List<Etudiant> etudiant = await repositoryFactory.EtudiantRepository().FindByConditionAsync(e=>e.Id.Equals(idEtudiant));
         if (etudiant is { Count: 0 }) throw new EtudiantNotFoundException(idEtudiant.ToString());
         // On recherche le parcours
-        List<Parcours> parcours = await repositoryFactory.ParcoursRepository().FindByConditionAsync(p=>p.Id.Equals(idParcours));;
+        List<Parcours> parcours = await repositoryFactory.ParcoursRepository().FindByConditionAsync(p=>p.Id.Equals(idParcours));
         if (parcours is { Count: 0 }) throw new ParcoursNotFoundException(idParcours.ToString());
         
         // On vérifie que l'étudiant n'est pas déjà dans le parcours
-        List<Etudiant> inscrit = await repositoryFactory.EtudiantRepository().FindByConditionAsync(e=>e.Id.Equals(idEtudiant) && e.ParcoursSuivi.Id.Equals(idParcours));
-        if (inscrit is { Count: > 0 }) throw new DuplicateInscriptionException(idEtudiant+" est déjà inscrit dans le parcours dans le parcours : "+idParcours);     
+        List<Etudiant> inscrit = await repositoryFactory.EtudiantRepository()
+            .FindByConditionAsync(e => 
+                e.Id.Equals(idEtudiant) &&
+                e.ParcoursSuivi != null &&  // 🔒 Vérification du null
+                e.ParcoursSuivi.Id.Equals(idParcours));
+
+        if (inscrit.Any())
+            throw new DuplicateInscriptionException(
+                $"{idEtudiant} est déjà inscrit dans le parcours : {idParcours}"
+            );
+
     }
 }
