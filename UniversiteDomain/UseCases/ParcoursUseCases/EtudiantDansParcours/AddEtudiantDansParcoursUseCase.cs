@@ -55,7 +55,7 @@ public class AddEtudiantDansParcoursUseCase(IRepositoryFactory repositoryFactory
         List<Etudiant> inscrit = await repositoryFactory.EtudiantRepository()
             .FindByConditionAsync(e => 
                 e.Id.Equals(idEtudiant) &&
-                e.ParcoursSuivi != null &&  // 🔒 Vérification du null
+                e.ParcoursSuivi != null && 
                 e.ParcoursSuivi.Id.Equals(idParcours));
 
         if (inscrit.Any())
