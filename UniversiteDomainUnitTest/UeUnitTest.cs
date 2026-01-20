@@ -12,18 +12,17 @@ public class UeUnitTest
     [Test]
     public async Task CreateUeUseCase_ShouldCreate_WhenValid()
     {
-
         var ueAvant = new Ue
         {
-            Code = "MATH101",
-            NomUe = "Algorithmique"
+            NumeroUe = "UE101",
+            Intitule = "Algorithmique"
         };
 
         var ueFinal = new Ue
         {
             Id = 1,
-            Code = "MATH101",
-            NomUe = "Algorithmique"
+            NumeroUe = "UE101",
+            Intitule = "Algorithmique"
         };
 
         var mockRepo = new Mock<IUeRepository>();
@@ -41,11 +40,10 @@ public class UeUnitTest
 
         var useCase = new CreateUeUseCase(mockFactory.Object);
 
-
         var result = await useCase.ExecuteAsync(ueAvant);
-        
+
         Assert.That(result.Id, Is.EqualTo(1));
-        Assert.That(result.Code, Is.EqualTo("MATH101"));
-        Assert.That(result.NomUe, Is.EqualTo("Algorithmique"));
+        Assert.That(result.NumeroUe, Is.EqualTo("UE101"));
+        Assert.That(result.Intitule, Is.EqualTo("Algorithmique"));
     }
 }

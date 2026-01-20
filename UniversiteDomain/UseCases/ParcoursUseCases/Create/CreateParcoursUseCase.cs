@@ -21,7 +21,7 @@ public class CreateParcoursUseCase
         // Vérifie si le parcours existe déjà
         var existants = await repo.FindByConditionAsync(p => p.Id == parcours.Id);
         if (existants != null && existants.Count > 0)
-            throw new Exception("Le parcours existe déjà"); // tu peux mettre une exception perso
+            throw new Exception("Le parcours existe déjà");
 
         // Création
         var created = await repo.CreateAsync(parcours);
