@@ -2,10 +2,13 @@
 
 public class Note
 {
-    public long Id { get; set; }          
-    public float Valeur { get; set; }     
+    public float Valeur { get; set; }
 
-    // Association Etudiant <-> UE
+    // Clé composite + FK
     public long EtudiantId { get; set; }
     public long UeId { get; set; }
+
+    // Navigations (OBLIGATOIRES pour le mapping du cours)
+    public Etudiant? Etudiant { get; set; }
+    public Ue? Ue { get; set; }
 }

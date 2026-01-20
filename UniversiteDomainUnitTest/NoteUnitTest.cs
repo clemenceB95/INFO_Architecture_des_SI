@@ -39,7 +39,8 @@ public class NoteUnitTest
             ParcoursSuivi = parcours
         };
 
-        var noteCreee = new Note { Id = 100, EtudiantId = idEtudiant, UeId = idUe, Valeur = valeur };
+        // Note sans Id (clé composite EtudiantId + UeId)
+        var noteCreee = new Note { EtudiantId = idEtudiant, UeId = idUe, Valeur = valeur };
 
         var mockEtudiantRepo = new Mock<IEtudiantRepository>();
         mockEtudiantRepo
@@ -71,7 +72,6 @@ public class NoteUnitTest
         var result = await useCase.ExecuteAsync(idEtudiant, idUe, valeur);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo(100));
         Assert.That(result.EtudiantId, Is.EqualTo(idEtudiant));
         Assert.That(result.UeId, Is.EqualTo(idUe));
         Assert.That(result.Valeur, Is.EqualTo(valeur));
@@ -300,7 +300,8 @@ public class NoteUnitTest
             ParcoursSuivi = parcours
         };
 
-        var noteExistante = new Note { Id = 99, EtudiantId = idEtudiant, UeId = idUe, Valeur = 14f };
+        // Note existante sans Id
+        var noteExistante = new Note { EtudiantId = idEtudiant, UeId = idUe, Valeur = 14f };
 
         var mockEtudiantRepo = new Mock<IEtudiantRepository>();
         mockEtudiantRepo
@@ -315,7 +316,7 @@ public class NoteUnitTest
         var mockNoteRepo = new Mock<INoteRepository>();
         mockNoteRepo
             .Setup(r => r.FindByConditionAsync(It.IsAny<Expression<Func<Note, bool>>>()))
-            .ReturnsAsync(new List<Note> { noteExistante }); // déjà une note
+            .ReturnsAsync(new List<Note> { noteExistante });
 
         var mockFactory = new Mock<IRepositoryFactory>();
         mockFactory.Setup(f => f.EtudiantRepository()).Returns(mockEtudiantRepo.Object);
