@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using UniversiteDomain.DataAdapters.DataAdaptersFactory;
+using UniversiteDomain.Dtos;
 using UniversiteDomain.Entities;
 using UniversiteDomain.UseCases.EtudiantUseCases.Create;
 
@@ -7,7 +8,6 @@ namespace UniversiteRestApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-
 public class EtudiantController(IRepositoryFactory repositoryFactory) : ControllerBase
 {
     // GET: api/Etudiant
@@ -18,19 +18,33 @@ public class EtudiantController(IRepositoryFactory repositoryFactory) : Controll
     }
 
     // GET api/Etudiant/5
-    [HttpGet("{id}")]
-    public string Get(int id)
+    // Placeholder pour l'instant (nécessaire pour CreatedAtAction)
+    [HttpGet("{id:long}")]
+    public ActionResult<EtudiantDto> GetUnEtudiant(long id)
     {
-        return "value";
+        return NotFound();
     }
 
-    // Crée un nouvel étudiant sans parcours
-    // POST api/<EtudiantApi>
+    // POST api/Etudiant
     [HttpPost]
-    public async Task PostAsync([FromBody] Etudiant etudiant)
+    public async Task<ActionResult<EtudiantDto>> PostAsync([FromBody] EtudiantDto etudiantDto)
     {
-        CreateEtudiantUseCase uc = new CreateEtudiantUseCase(repositoryFactory);
-        await uc.ExecuteAsync(etudiant);
+        CreateEtudiantUseCase createEtudiantUc = new CreateEtudiantUseCase(repositoryFactory);
+        Etudiant etud = etudiantDto.ToEntity();
+
+        try
+        {
+            etud = await createEtudiantUc.ExecuteAsync(etud);
+        }
+        catch (Exception e)
+        {
+            ModelState.AddModelError(nameof(e), e.Message);
+            return ValidationProblem();
+        }
+
+        EtudiantDto dto = new EtudiantDto().ToDto(etud);
+
+        return CreatedAtAction(nameof(GetUnEtudiant), new { id = dto.Id }, dto);
     }
 
     // PUT api/Etudiant/5
@@ -45,5 +59,7 @@ public class EtudiantController(IRepositoryFactory repositoryFactory) : Controll
     {
     }
 }
+
+
 
 
