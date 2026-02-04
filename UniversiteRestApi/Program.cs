@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UniversiteDomain.DataAdapters.DataAdaptersFactory;
+using UniversiteDomain.JeuxDeDonnees;
 using UniversiteEFDataProvider.Data;
 using UniversiteEFDataProvider.RepositoryFactories;
 
@@ -20,7 +21,7 @@ builder.Services.AddLogging(options =>
 String connectionString = builder.Configuration.GetConnectionString("MySqlConnection") ?? throw new InvalidOperationException("Connection string 'MySqlConnection' not found.");
 // Création du contexte de la base de données en utilisant la connexion MySql que l'on vient de définir
 // Ce contexte est rajouté dans les services de l'application, toujours prêt à être utilisé par injection de dépendances
-builder.Services.AddDbContext<UniversiteDbContext>(options =>options.UseMySQL(connectionString));
+builder.Services.AddDbContext<UniversiteDbContext>(options => options.UseMySQL(connectionString));
 // La factory est rajoutée dans les services de l'application, toujours prête à être utilisée par injection de dépendances
 builder.Services.AddScoped<IRepositoryFactory, RepositoryFactory>();
 
@@ -42,17 +43,31 @@ app.UseSwaggerUI();
 using(var scope = app.Services.CreateScope())
 {
     // On récupère le logger pour afficher des messages. On l'a mis dans les services de l'application
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<UniversiteDbContext>>();
+    var loggerDb = scope.ServiceProvider.GetRequiredService<ILogger<UniversiteDbContext>>();
     // On récupère le contexte de la base de données qui est stocké sans les services
     DbContext context = scope.ServiceProvider.GetRequiredService<UniversiteDbContext>();
-    logger.LogInformation("Initialisation de la base de données");
+    loggerDb.LogInformation("Initialisation de la base de données");
     // Suppression de la BD
-    logger.LogInformation("Suppression de la BD si elle existe");
+    loggerDb.LogInformation("Suppression de la BD si elle existe");
     await context.Database.EnsureDeletedAsync();
     // Recréation des tables vides
-    logger.LogInformation("Création de la BD et des tables à partir des entities");
+    loggerDb.LogInformation("Création de la BD et des tables à partir des entities");
     await context.Database.EnsureCreatedAsync();
 }
 
 // Exécution de l'application
+// Initisation de la base de données
+ILogger loggerSeed = app.Services.GetRequiredService<ILogger<BdBuilder>>();
+loggerSeed.LogInformation("Chargement des données de test");
+using(var scope = app.Services.CreateScope())
+{
+    UniversiteDbContext context = scope.ServiceProvider.GetRequiredService<UniversiteDbContext>();
+    _ = context; // évite le warning "context jamais utilisé" si tu gardes la ligne
+    IRepositoryFactory repositoryFactory = scope.ServiceProvider.GetRequiredService<IRepositoryFactory>();   
+    // C'est ici que vous changez le jeu de données pour démarrer sur une base vide par exemple
+    BdBuilder seedBd = new BasicBdBuilder(repositoryFactory);
+    await seedBd.BuildUniversiteBdAsync();
+}
+
 app.Run();
+

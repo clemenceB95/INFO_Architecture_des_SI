@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using UniversiteDomain.DataAdapters.DataAdaptersFactory;
+﻿using UniversiteDomain.DataAdapters.DataAdaptersFactory;
 using UniversiteDomain.Entities;
 using UniversiteDomain.Exceptions.UeExceptions;
 
