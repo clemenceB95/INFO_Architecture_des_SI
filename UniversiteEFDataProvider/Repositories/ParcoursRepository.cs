@@ -7,7 +7,6 @@ namespace UniversiteEFDataProvider.Repositories;
 public class ParcoursRepository(UniversiteDbContext context)
     : Repository<Parcours>(context), IParcoursRepository
 {
-    // ====== ONE-TO-MANY Parcours -> Etudiants ======
 
     public async Task<Parcours> AddEtudiantAsync(Parcours parcours, Etudiant etudiant)
     {
@@ -62,8 +61,7 @@ public class ParcoursRepository(UniversiteDbContext context)
 
         return p;
     }
-
-    // ====== MANY-TO-MANY Parcours <-> UE ======
+    
 
     public async Task<Parcours> AddUeAsync(Parcours parcours, Ue ue)
     {

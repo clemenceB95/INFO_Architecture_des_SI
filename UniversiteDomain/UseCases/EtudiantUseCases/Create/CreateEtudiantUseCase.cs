@@ -13,6 +13,11 @@ public class CreateEtudiantUseCase
     {
         this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
     }
+    
+    public bool IsAuthorized(string role)
+    {
+        return role == Roles.Responsable || role == Roles.Scolarite;
+    }
 
     public async Task<Etudiant> ExecuteAsync(string numEtud, string nom, string prenom, string email)
     {
@@ -59,3 +64,4 @@ public class CreateEtudiantUseCase
             throw new InvalidNomEtudiantException($"{etudiant.Nom} incorrect - Le nom d'un étudiant doit contenir plus de 3 caractères");
     }
 }
+
