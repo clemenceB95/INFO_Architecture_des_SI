@@ -1,5 +1,4 @@
 ﻿using UniversiteDomain.Entities;
-
 namespace UniversiteDomain.Dtos;
 
 public class EtudiantDto
@@ -23,5 +22,10 @@ public class EtudiantDto
     public Etudiant ToEntity()
     {
         return new Etudiant {Id = this.Id, NumEtud = this.NumEtud, Nom = this.Nom, Prenom = this.Prenom, Email = this.Email};
+    }
+    
+    public static List<EtudiantDto> ToDtos(List<Etudiant> etudiants)
+    {
+        return etudiants.Select(e => new EtudiantDto().ToDto(e)).ToList();
     }
 }
