@@ -11,6 +11,11 @@ public class CreateParcoursUseCase
     {
         this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
     }
+    
+    public bool IsAuthorized(string role)
+    {
+        return role == Roles.Responsable || role == Roles.Scolarite;
+    }
 
     public async Task<Parcours> ExecuteAsync(Parcours parcours)
     {

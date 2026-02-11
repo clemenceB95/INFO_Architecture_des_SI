@@ -18,6 +18,10 @@ public class AddUeDansParcoursUseCase(IRepositoryFactory repositoryFactory)
         ArgumentNullException.ThrowIfNull(ue);
         return await ExecuteAsync(parcours.Id, ue.Id);
     }
+    public bool IsAuthorized(string role)
+    {
+        return role == Roles.Responsable || role == Roles.Scolarite;
+    }
 
     // Ajout d'une UE via ids
     public async Task<Parcours> ExecuteAsync(long idParcours, long idUe)
@@ -81,4 +85,5 @@ public class AddUeDansParcoursUseCase(IRepositoryFactory repositoryFactory)
                 $"{idUe} est déjà présente dans le parcours : {idParcours}"
             );
     }
+    
 }

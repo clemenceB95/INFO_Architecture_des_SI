@@ -1,4 +1,5 @@
 ﻿using UniversiteDomain.Entities;
+using System.Linq;
 
 namespace UniversiteDomain.Dtos;
 
@@ -19,5 +20,10 @@ public class ParcoursDto
     public Parcours ToEntity()
     {
         return new Parcours {Id = this.Id, NomParcours = this.NomParcours, AnneeFormation = this.AnneeFormation};
+    }
+    
+    public static List<ParcoursDto> ToDtos(List<Parcours> parcours)
+    {
+        return parcours.Select(p => new ParcoursDto().ToDto(p)).ToList();
     }
 }

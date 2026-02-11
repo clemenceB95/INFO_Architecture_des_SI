@@ -2,11 +2,18 @@
 using UniversiteDomain.Entities;
 using UniversiteDomain.Exceptions.EtudiantExceptions;
 using UniversiteDomain.Exceptions.ParcoursExceptions;
+using UniversiteDomain.Util;
 
 namespace UniversiteDomain.UseCases.ParcoursUseCases.EtudiantDansParcours;
 
 public class AddEtudiantDansParcoursUseCase(IRepositoryFactory repositoryFactory)
 {
+
+    public bool IsAuthorized(string role)
+    {
+        return role == Roles.Responsable || role == Roles.Scolarite;
+    }
+    
     // Rajout d'un étudiant dans un parcours
       public async Task<Parcours> ExecuteAsync(Parcours parcours, Etudiant etudiant)
       {
