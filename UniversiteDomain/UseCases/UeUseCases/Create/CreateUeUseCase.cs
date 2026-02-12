@@ -30,4 +30,7 @@ public class CreateUeUseCase(IRepositoryFactory factory)
         await _factory.SaveChangesAsync();
         return result;
     }
+    
+    public bool IsAuthorized(string role)
+        => role == Roles.Responsable || role == Roles.Scolarite;
 }

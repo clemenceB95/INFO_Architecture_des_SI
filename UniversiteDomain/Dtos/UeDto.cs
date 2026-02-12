@@ -20,4 +20,9 @@ public class UeDto
     {
         return new Ue {Id = this.Id, NumeroUe = this.NumeroUe, Intitule = this.Intitule};
     }
+    
+    public static List<UeDto> ToDtos(List<Ue> ues)
+    {
+        return ues.Select(u => new UeDto().ToDto(u)).ToList();
+    }
 }
