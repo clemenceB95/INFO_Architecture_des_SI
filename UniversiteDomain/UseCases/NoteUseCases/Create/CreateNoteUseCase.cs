@@ -1,7 +1,7 @@
 ﻿using UniversiteDomain.DataAdapters.DataAdaptersFactory;
 using UniversiteDomain.Entities;
 
-namespace UniversiteDomain.UseCases.NotesUseCases;
+namespace UniversiteDomain.UseCases.NoteUseCases.Create;
 
 public class CreateNoteUseCase(IRepositoryFactory factory)
 {
@@ -12,14 +12,12 @@ public class CreateNoteUseCase(IRepositoryFactory factory)
     {
         if (etudiantId <= 0) throw new ArgumentOutOfRangeException(nameof(etudiantId));
         if (ueId <= 0) throw new ArgumentOutOfRangeException(nameof(ueId));
-
-        // Règle classique : note sur 20
+        
         if (valeur < 0 || valeur > 20)
             throw new ArgumentOutOfRangeException(nameof(valeur), "La note doit être comprise entre 0 et 20.");
 
         var repo = _factory.NoteRepository();
-
-        // Règle : 1 note max par (EtudiantId, UeId)
+        
         var existantes = await repo.FindByConditionAsync(n => n.EtudiantId == etudiantId && n.UeId == ueId);
         if (existantes != null && existantes.Any())
             throw new InvalidOperationException($"Une note existe déjà pour EtudiantId={etudiantId} et UeId={ueId}.");
@@ -35,4 +33,7 @@ public class CreateNoteUseCase(IRepositoryFactory factory)
         await _factory.SaveChangesAsync();
         return result;
     }
+    
+    public bool IsAuthorized(string role)
+        => role == Roles.Responsable || role == Roles.Scolarite;
 }
