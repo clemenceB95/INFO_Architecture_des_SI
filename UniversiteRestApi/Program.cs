@@ -4,11 +4,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using UniversiteDomain.DataAdapters;
+using UniversiteDomain.DataAdapters.BulkNotes;
 using UniversiteDomain.DataAdapters.DataAdaptersFactory;
 using UniversiteDomain.JeuxDeDonnees;
+using UniversiteDomain.UseCases.BulkNotesUseCases;
 using UniversiteEFDataProvider.Data;
 using UniversiteEFDataProvider.Entities;
 using UniversiteEFDataProvider.RepositoryFactories;
+using UniversiteEFDataProvider.Repositories;
+using UniversiteEFDataProvider.Repositories.BulkNotes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,9 +67,16 @@ String connectionString = builder.Configuration.GetConnectionString("MySqlConnec
 
 // Création du contexte de la base de données en utilisant la connexion MySql que l'on vient de définir
 // Ce contexte est rajouté dans les services de l'application, toujours prêt à être utilisé par injection de dépendances
-builder.Services.AddDbContext<UniversiteDbContext>(options =>options.UseMySQL(connectionString));
+builder.Services.AddDbContext<UniversiteDbContext>(options => options.UseMySQL(connectionString));
 // La factory est rajoutée dans les services de l'application, toujours prête à être utilisée par injection de dépendances
 builder.Services.AddScoped<IRepositoryFactory, RepositoryFactory>();
+
+builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+builder.Services.AddScoped<IBulkNotesReader, BulkNotesRepository>();
+builder.Services.AddScoped<IBulkNotesWriter, BulkNotesRepository>();
+builder.Services.AddScoped<GenerateUeNotesCsvTemplateUseCase>();
+builder.Services.AddScoped<ImportUeNotesCsvUseCase>();
+
 //////////////// Fin connexion BD
 
 ////////// Sécurisation
@@ -114,11 +126,12 @@ app.UseSwaggerUI();
 
 // Configuration du serveur Web
 app.UseHttpsRedirection();
-app.MapControllers();
 
 // Sécurisation
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
 
 // Initialisation de la base de données
 ILogger logger = app.Services.GetRequiredService<ILogger<BdBuilder>>();
@@ -137,7 +150,6 @@ using(var scope = app.Services.CreateScope())
 
 // Exécution de l'application
 app.Run();
-
 
 
 
